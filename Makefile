@@ -71,7 +71,7 @@ manifest: pull-data
 	#
 	# show contents, for convenience
 	#
-	cat tempdata/manifest.json | jq
+	#cat tempdata/manifest.json | jq
 
 
 process-data: manifest
@@ -89,8 +89,23 @@ process-data: manifest
 process-data-hourly: manifest
 
 	loopr -p -j --listfile tempdata/manifest.json --cmd-string \
-	'jsonfile2csv {output_file} --generator wmx_converters.HourlyForecastConverter --delimiter "|" --params=zipcode:{zipcode},date:{date}'
+	'jsonfile2csv {output_file} --generator wmx_converters.HourlyForecastConverter --delimiter "|" --params=zipcode:{zipcode},date:{date}' \
+	> tempdata/conversion_commands.txt
 
+	loopr -p -j --listfile tempdata/manifest.json --cmd-string \
+	'data/hourly_forecast_data_{zipcode}_{date}.csv' > tempdata/conversion_outfiles.txt
+
+	tuplegen --delimiter '%' --listfiles=tempdata/conversion_commands.txt,tempdata/conversion_outfiles.txt \
+	| tuple2json --delimiter '%' --keys=command,outfile > tempdata/hourly_conversion_manifest.json
+
+	cp templates/shell_script_core.sh.tpl temp_scripts/process_hourly_forecast_data.sh
+
+	loopr -p -j --listfile tempdata/hourly_conversion_manifest.json --cmd-string \
+	'{command} > {outfile}' >> temp_scripts/process_hourly_forecast_data.sh
+
+	chmod u+x temp_scripts/process_hourly_forecast_data.sh
+	temp_scripts/process_hourly_forecast_data.sh
+	
 
 diagnostic:
 
@@ -98,5 +113,7 @@ diagnostic:
 	--target forecast | jq -r .data | jq .forecast.forecastday | jq .[0].date
 
 
+requirements:
+	pipenv lock -r > requirements.txt
 
 

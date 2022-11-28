@@ -1,0 +1,37 @@
+
+
+PREREQUISITES:
+
+Python 3.8 or higher
+Unix command-line utilities: 
+- jq
+- pipenv
+
+
+Library dependencies:
+[none]
+
+++++++++++++++++++++++++++++++++++
+
+To set up the tooling environment and run the data pipelines:
+
+issue "pipenv install" to install the Python dependencies
+issue "pipenv shell" to start the virtual environment
+set the necessary environment vars: 
+
+WMX_HOME (this should be the repository root directory)
+WAPI_KEY (this should be the key for the Weather API)
+PYTHONPATH must include the repository root directory. ( export PYTHONPATH=`pwd` )
+
+
+++++++++++++++++++++++++++++++++++
++
++ Makefile instrumentation: "makeblocks"
+
+The Makefile contains some comments which contain a particular syntax of the form:
+
++open-varblock(...)
++open-cmdblock(...)
+
+and so on. These comments are part of the data pipeline testing and instrumentation system. Do not alter or remove them
+unless you know what you are doing.
