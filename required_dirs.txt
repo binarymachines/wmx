@@ -1,0 +1,6 @@
+config
+tempdata
+temp_scripts
+templates
+data
+static_data

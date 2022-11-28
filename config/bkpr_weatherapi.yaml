@@ -1,0 +1,42 @@
+# 
+# YAML init file for beekeeper 
+#
+#
+globals:
+    project_home: $WMX_HOME
+    service_module: wmx_services
+    processor_module: wmx_processors
+    macro_module: wmx_macros
+
+service_objects:
+
+macros:
+  
+targets:
+    test:
+      url: https://api.weatherapi.com/v1/forecast.json
+      method: POST
+
+      request_params:
+        - name: key
+          value: $WAPI_KEY          
+
+        - name: q
+          value: 07086
+
+        - name: dt
+          value: 2022-11-27
+        
+    daily:
+      url: https://api.weatherapi.com/v1/current.json
+      method: POST
+
+      request_params:
+        - name: key
+          value: $WAPI_KEY          
+
+        - name: q
+          value: 07030,07086
+
+        - name: days
+          value: 1
