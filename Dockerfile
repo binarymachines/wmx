@@ -20,5 +20,3 @@ ENV WAPI_KEY={api_key}
 WORKDIR $APP_PATH
 
 RUN pip install -r requirements.txt
-
-CMD echo 'Container is up.'
