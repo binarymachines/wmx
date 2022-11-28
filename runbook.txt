@@ -9,20 +9,60 @@ Unix command-line utilities:
 
 
 Library dependencies:
-[none]
+- postgresql-client
+- postgresql-contrib
+- libpq-dev
+- libmagic1
+
+
+Remember to replace the WAPI_KEY environment variable in the Dockerfile with the actual value
+of the Weather API key.
 
 ++++++++++++++++++++++++++++++++++
 
-To set up the tooling environment and run the data pipelines:
+NOTE: ONE OF THE ZIPCODES IN THE TEST SET (07030) IS NOT VALID.
 
-issue "pipenv install" to install the Python dependencies
-issue "pipenv shell" to start the virtual environment
-set the necessary environment vars: 
+This will not crash out the pipeline; you will see the errors emitted to the console
+as the pipeline runs, but the remaining valid zipcode will still be processed correctly.
 
-WMX_HOME (this should be the repository root directory)
-WAPI_KEY (this should be the key for the Weather API)
-PYTHONPATH must include the repository root directory. ( export PYTHONPATH=`pwd` )
+++++++++++++++++++++++++++++++++++
 
+To set up the tooling environment (in a NATIVE context) and run the data pipelines:
+
+ - issue "pipenv install" to install the Python dependencies
+ - issue "pipenv shell" to start the virtual environment
+ - set the necessary environment vars: 
+
+	WMX_HOME (this should be the repository root directory)
+	WAPI_KEY (this should be the key for the Weather API)
+	PYTHONPATH must include the repository root directory. ( export PYTHONPATH=`pwd` )
+
+Then, at the shell prompt, issue:
+
+ make process-data
+ make process-data-hourly
+
+and check the <repo_root>/data directory for the outputs.
+
+
+++++++++++++++++++++++++++++++++++
+
+To set up the tooling environment (in a DOCKER context) and run the data pipelines:
+
+!!! You MUST modify the Dockerfile and put a valid WeatherAPI key in the indicated location.
+
+Then issue: 
+
+ docker build -t wmxapp .
+ docker run -dt wmxapp
+ docker exec -t <proc_name> bash
+
+Then, at the container's shell prompt, issue:
+
+ make process-data
+ make process-data-hourly
+
+and check the <repo_root>/data directory for the outputs.
 
 ++++++++++++++++++++++++++++++++++
 +

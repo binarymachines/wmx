@@ -14,11 +14,11 @@ COPY . $APP_PATH
 
 ENV PYTHONPATH=$APP_PATH
 ENV WMX_HOME=$APP_PATH
-ENV WAPI_KEY=b47fe604bf2a479f91f183710222611
+ENV WAPI_KEY={api_key}
 
 # Change the working directory
 WORKDIR $APP_PATH
 
 RUN pip install -r requirements.txt
 
-#CMD echo 'Container is up.'
+CMD echo 'Container is up.'

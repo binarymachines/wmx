@@ -10,21 +10,35 @@ clean:
 	rm -f tempdata/*
 	rm -f data/*
 
-
+# +open-targetblock
+#
 gen-params: init
-
+	# +open-varblock(init-var)
+	
 	$(eval NUM_DAYS=3)
+
+	# +close-varblock
+
+	# +open-cmdblock(init-cmd-1)
+	#
 	countup --from 1 --to $(NUM_DAYS) > tempdata/daysahead.txt
 	loopr -t --listfile tempdata/daysahead.txt --vartoken % --cmd-string 'datetimecalc --days % --from today' | grep "\S" > tempdata/dates.txt
-	
+	#
+	# +close-cmdblock
+
 	xcombine --listfiles=tempdata/dates.txt,static_data/zipcodes.txt --delimiter '|' \
 	> tempdata/date_zip_combinations.csv
 	
 	cat tempdata/date_zip_combinations.csv | tuple2json --delimiter '|' --keys=date,zipcode > tempdata/input_params.json
 
+# +close-targetblock
 
+
+# +open-targetblock
+#
 pull-data: gen-params
 
+	# +open-cmdblock(gen-params-1)
 	#
 	# use the structured input data to generate warp commands which will populate our beekeeper config templates
 	#
@@ -32,12 +46,17 @@ pull-data: gen-params
 	'warp --py --template-file=templates/bkpr_weatherapi.yaml.tpl --params=zipcode:{zipcode},date:{date} > tempdata/bkpr_wapi_{zipcode}_{date}.yaml' \
 	> tempdata/warp_commands.txt
 
+	# +close-cmdblock
+
+	# +open-cmdblock(gen-params-2)
 	#
 	# run our generated warp commands; this will give us beekeeper config files for our date-zipcode combinations
 	#  
 	cat templates/shell_script_core.sh.tpl tempdata/warp_commands.txt > temp_scripts/warp_commands.sh
 	chmod u+x temp_scripts/warp_commands.sh
 	temp_scripts/warp_commands.sh
+
+	# +close-cmdblock
 
 	#
 	# generate a list of beekeeper commands to call the weather API (one command per zipcode-date combination)
@@ -52,8 +71,12 @@ pull-data: gen-params
 	cat templates/shell_script_core.sh.tpl tempdata/beekeeper_commands.txt > temp_scripts/beekeeper_commands.sh
 	chmod u+x temp_scripts/beekeeper_commands.sh
 	temp_scripts/beekeeper_commands.sh
-	
 
+# +close-targetblock
+
+
+# +open-targetblock
+#
 manifest: pull-data
 	#
 	# generate a manifest
@@ -73,7 +96,10 @@ manifest: pull-data
 	#
 	#cat tempdata/manifest.json | jq
 
+# +close-targetblock
 
+# +open-targetblock
+#
 process-data: manifest
 
 	cp templates/shell_script_core.sh.tpl temp_scripts/process_forecast_data.sh
@@ -85,7 +111,10 @@ process-data: manifest
 	chmod u+x temp_scripts/process_forecast_data.sh
 	temp_scripts/process_forecast_data.sh
 
+# +close-targetblock
 
+# +open-targetblock
+#
 process-data-hourly: manifest
 
 	loopr -p -j --listfile tempdata/manifest.json --cmd-string \
@@ -105,7 +134,8 @@ process-data-hourly: manifest
 
 	chmod u+x temp_scripts/process_hourly_forecast_data.sh
 	temp_scripts/process_hourly_forecast_data.sh
-	
+
+# +close-targetblock 	
 
 diagnostic:
 
