@@ -55,7 +55,7 @@ Then issue:
 
  docker build -t wmxapp .
  docker run -dt wmxapp
- docker exec -t <proc_name> bash
+ docker exec -it <proc_name> bash
 
 Then, at the container's shell prompt, issue:
 
