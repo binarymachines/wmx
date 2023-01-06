@@ -1,11 +1,1 @@
-
-
- docker build -t wmxapp .
-
- docker run -dt wmxapp
-
- docker exec -t <proc_name> bash
-
-
- make process-data
- make process-data-hourly
+...
