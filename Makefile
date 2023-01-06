@@ -1,6 +1,13 @@
 # Makefile for Walmart test data pipeline
 
 
+regen:
+	routegen -e config/telemetry_svc.yaml > telemetrysvc.py
+
+run:
+	python telemetrysvc.py --configfile config/telemetry_svc.yaml
+	
+
 init:
 	cat required_dirs.txt | xargs mkdir -p
 
@@ -23,6 +30,7 @@ gen-params: init
 	#
 	countup --from 1 --to $(NUM_DAYS) > tempdata/daysahead.txt
 	loopr -t --listfile tempdata/daysahead.txt --vartoken % --cmd-string 'datetimecalc --days % --from today' | grep "\S" > tempdata/dates.txt
+
 	#
 	# +close-cmdblock
 

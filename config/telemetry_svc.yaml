@@ -1,0 +1,85 @@
+# 
+# YAML init file for SNAP microservice framework
+#
+#
+
+globals:
+        bind_host:                   0.0.0.0
+        port:                        9050
+        debug:                       True
+        logfile:                     tele_svc.log
+        project_directory:           $WMX_HOME
+        service_module:              wmx_services
+        transform_function_module:   wmx_transforms
+        preprocessor_module:         wmx_decode
+        deployment_type:             
+
+
+service_objects:
+
+  telemetry_context:
+    class: TelemetryContext
+    init_params:
+      - name: local_storage_file
+        value: /tmp/game_telemetry.json
+    
+
+data_shapes:
+        default:
+          fields:
+
+        item_equip_shape:
+          fields:
+            - name: game_id
+              datatype: string
+              required: True
+
+            - name: player_id
+              datatype: string
+              required: True
+
+            - name: instance_id
+              datatype: string
+              required: Treu
+
+            - name: connected_server_id
+              datatype: string
+              required: True
+
+            - name: game_level_id
+              datatype: string
+              required: True
+
+            - name: game_clock
+              datatype: int
+              required: True
+
+            - name: session_clock
+              datatype: int # seconds
+              required: True
+
+  
+transforms:
+        ping:
+          route:              /ping
+          method:             GET
+          input_shape:        default
+          output_mimetype:    application/json
+
+        itemequip:
+          route:              /item/equip
+          method:             POST
+          input_shape:        item_equip_shape
+          output_mimetype:    application/json
+
+
+decoders:
+  #application/json; charset=UTF-8: decode_json
+
+
+error_handlers:
+        - error:                NoSuchObjectException
+          tx_status_code:       HTTP_NOT_FOUND 
+                
+        - error:                DuplicateIDException
+          tx_status_code:       HTTP_BAD_REQUEST
