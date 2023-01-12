@@ -22,6 +22,31 @@ service_objects:
     init_params:
       - name: local_storage_file
         value: /tmp/game_telemetry.json
+
+  db:    
+    class: PostgreSQLService
+    init_params:
+      - name: host
+        value: $WMX_DB_HOST
+  
+      - name: port
+        value: $WMX_DB_PORT
+  
+      - name: dbname
+        value: $WMX_DB
+
+      - name: schema
+        value: public
+  
+      - name: username
+        value: $WMX_DB_USER
+  
+      - name: password
+        value: $WMX_DB_PASSWORD
+
+      - name: connect_timeout
+        value: 5
+
     
 
 data_shapes:
@@ -34,13 +59,17 @@ data_shapes:
               datatype: string
               required: True
 
+            - name: item_id
+              datatype: string
+              required: True
+
             - name: player_id
               datatype: string
               required: True
 
             - name: instance_id
               datatype: string
-              required: Treu
+              required: True
 
             - name: connected_server_id
               datatype: string

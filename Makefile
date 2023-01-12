@@ -8,6 +8,26 @@ run:
 	python telemetrysvc.py --configfile config/telemetry_svc.yaml
 	
 
+db-up: docker_compose
+	mkdir -p traxdb/init
+
+	warp --py --template-file=template_files/db_init.sql.tpl \
+	--params=trax_dba:$$TRAX_DBA_USER,dba_password:$$TRAX_DBA_PASSWORD,trax_db:$$TRAX_DB,trax_schema:public,trax_user:$$TRAX_DB_USER,trax_password:$$TRAX_DB_PASSW
+ORD \
+	> traxdb/init/db_init.sql
+
+	$(docker_compose_cmd) -f traxdb.yml up -d
+
+
+db-down: docker_compose
+	$(docker_compose_cmd) -f traxdb.yml down
+
+
+db-bounce: db-down db-up
+
+
+
+
 init:
 	cat required_dirs.txt | xargs mkdir -p
 
